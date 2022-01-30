@@ -3,7 +3,6 @@ package QA;
 import lombok.Data;
 
 @Data
-
 public class Answers implements Comparable<Answers> {
     private String answer;
     private boolean correct;

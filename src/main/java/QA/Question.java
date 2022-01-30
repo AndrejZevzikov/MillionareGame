@@ -13,15 +13,15 @@ public class Question {
     private Set<Answers> answers;
     private GameDifficult difficult;
 
-    public Question(String question, Set<Answers> answers, String difficult) {
+    public Question(String question, Set<Answers> answers, GameDifficult difficult) {
         this.question = question;
         this.answers = answers;
-        setDifficult(difficult);
+        this.difficult = difficult;
     }
 
-    public void setDifficult(String difficult) {
+    public void setDifficult(GameDifficult difficult) {
         for (GameDifficult value : GameDifficult.values()) {
-            if (value.getName().equals(difficult)) {
+            if (value.equals(difficult)) {
                 this.difficult = value;
             }
         }
@@ -123,7 +123,7 @@ public class Question {
         getCorrectAnswer().setAudiencePercentages(100 - getAudienceVotingForAllAnswers());
     }
 
-    private Answers getCorrectAnswer() {
+    public Answers getCorrectAnswer() {
         return answers.stream()
                 .filter(Answers::isCorrect)
                 .findAny().get();
@@ -142,6 +142,4 @@ public class Question {
                 .max(Answers::compareTo)
                 .get();
     }
-
-
 }

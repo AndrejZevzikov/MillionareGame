@@ -15,17 +15,27 @@ public class QuestionsService {
         this.questionsList = questionsList;
     }
 
-    private Optional<Question> getQuestionByDifficulty(GameDifficult difficult) {
+    public Optional<Question> getQuestionByDifficulty(GameDifficult difficult) {
         return questionsList.stream()
                 .filter(question -> question.getDifficult().equals(difficult))
                 .findAny();
     }
 
+    public void removeQuestionFromList(Question question){
+        for (Question question1 : questionsList) {
+            if (question1.equals(question)){
+                questionsList.remove(question);
+                break;
+            }
+        }
+    }
+
+
     public void printQuestionForUserByDifficult(GameDifficult difficult) {
         printQuestionAndAnswers(getQuestionByDifficulty(difficult).get());
     }
 
-    private void printQuestionAndAnswers(Question question) {
+    public void printQuestionAndAnswers(Question question) {
         int i = 1;
         System.out.println(question.getQuestion());
         for (Answers answer : question.getAnswers()) {

@@ -1,12 +1,10 @@
 package Meniu;
 
 import enumai.QuestionsEnum;
-
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class MeniuText {
-
 
     public static int getSafeMoneyChoice() {
         int returnValue = 0;

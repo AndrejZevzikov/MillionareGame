@@ -23,5 +23,4 @@ public enum GameDifficult {
     public int[] getQuestionNumber() {
         return questionNumber;
     }
-
 }

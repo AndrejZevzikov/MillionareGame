@@ -1,5 +1,8 @@
 package enumai;
 
+import java.util.Arrays;
+import java.util.Comparator;
+
 public enum QuestionsEnum {
     NUMBER1(1, 100),
     NUMBER2(2, 200),
@@ -33,4 +36,15 @@ public enum QuestionsEnum {
         return winingMoney;
     }
 
+    public static int getMaxNumberValue(){
+        return Arrays.stream(QuestionsEnum.values()).max(Comparator.comparing(QuestionsEnum::getNumber)).get().getNumber();
+    }
+
+    public static int getWinningsByQuestionNumber(int number){
+        for (QuestionsEnum value : QuestionsEnum.values()) {
+            if (value.getNumber() == number){
+                return value.getWiningMoney();
+            }
+        } return 0;
+    }
 }

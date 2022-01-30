@@ -2,6 +2,7 @@ package services;
 
 import QA.Answers;
 import QA.Question;
+import enumai.GameDifficult;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -22,13 +23,29 @@ public class ReadFile {
         while (text != null) {
             String[] tempArray = text.split(",");
             Set<Answers> answers = new HashSet<>();
-            answers.add(new Answers(tempArray[1],true));
-            answers.add(new Answers(tempArray[2],false));
-            answers.add(new Answers(tempArray[3],false));
-            answers.add(new Answers(tempArray[4],false));
-            questionsList.add(new Question(tempArray[0],answers,tempArray[5]));
+            answers.add(new Answers(tempArray[1], true));
+            answers.add(new Answers(tempArray[2], false));
+            answers.add(new Answers(tempArray[3], false));
+            answers.add(new Answers(tempArray[4], false));
+            questionsList.add(new Question(tempArray[0], answers, generateDifficult(path)));
             text = reader.readLine();
         }
         return questionsList;
+    }
+
+    private static GameDifficult generateDifficult(String path) {
+        if (path.contains("/VeryEasy")) {
+            return GameDifficult.VERY_EASY;
+        } else if (path.contains("/Easy")) {
+            return GameDifficult.EASY;
+        } else if (path.contains("/Medium")) {
+            return GameDifficult.MEDIUM;
+        } else if (path.contains("/Hard")) {
+            return GameDifficult.HARD;
+        } else if (path.contains("/Extreme")) {
+            return GameDifficult.EXTREME;
+        } else {
+            return null;
+        }
     }
 }

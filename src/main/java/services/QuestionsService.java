@@ -1,3 +1,8 @@
+package services;
+
+import QA.Answers;
+import QA.Question;
+import enumai.GameDifficult;
 
 import java.util.List;
 import java.util.Optional;
@@ -10,13 +15,13 @@ public class QuestionsService {
         this.questionsList = questionsList;
     }
 
-    private Optional<Question> getQuestionByDifficulty(String difficult) {
+    private Optional<Question> getQuestionByDifficulty(GameDifficult difficult) {
         return questionsList.stream()
                 .filter(question -> question.getDifficult().equals(difficult))
                 .findAny();
     }
 
-    public void printQuestionForUserByDifficult(String difficult) {
+    public void printQuestionForUserByDifficult(GameDifficult difficult) {
         printQuestionAndAnswers(getQuestionByDifficulty(difficult).get());
     }
 
@@ -28,5 +33,4 @@ public class QuestionsService {
             i++;
         }
     }
-
 }

@@ -143,4 +143,12 @@ public class Question {
                 .get();
     }
 
+    public void printAudienceVotingResults(){
+        int i = 1;
+        for (Answers answer : answers) {
+            System.out.println(i + ". " + answer.getAnswer() + " " + answer.getAudiencePercentages()+"%");
+            i++;
+        }
+    }
+
 }

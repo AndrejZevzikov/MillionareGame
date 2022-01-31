@@ -1,6 +1,7 @@
 package Meniu;
 
 import enumai.QuestionsEnum;
+
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -22,7 +23,7 @@ public class MeniuText {
 
     private static boolean safeMoneyAmountValidator(int amount) {
         for (QuestionsEnum value : QuestionsEnum.values()) {
-            if (value.getWiningMoney() == amount) {
+            if (value.getWiningMoney() == amount && amount != 0) {
                 return true;
             }
         }

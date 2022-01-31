@@ -4,6 +4,10 @@ import Meniu.MeniuText;
 import QA.Question;
 import enumai.GameDifficult;
 import enumai.QuestionsEnum;
+import helpers.AudienceHelp;
+import helpers.FiftyFifty;
+import helpers.FriendCall;
+import helpers.Helper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,72 +18,128 @@ public class GameProcess {
     private QuestionsService questionsService;
     private int questionsCount = 0;
     private int safeAmountOfWinnings = 0;
-    private boolean fiftyFifty = true;
-    private boolean friendCall = true;
-    private boolean audienceHelp = true;
+    private List<Helper> helpers = new ArrayList<>();
+    private boolean isAnswerCorrect = true;
+    private Question question;
 
     public GameProcess(QuestionsService questionsService) {
         this.questionsService = questionsService;
+        helpers.add(new FiftyFifty());
+        helpers.add(new FriendCall());
+        helpers.add(new AudienceHelp());
     }
 
-    public void start(){
+    public void start() {
         setSafeAmountOfWinnings(MeniuText.getSafeMoneyChoice());
-        boolean resumeGame = true;
-        while (resumeGame && questionsCount < QuestionsEnum.getMaxNumberValue()) {
-            System.out.println("*****************************************************");
-            System.out.println("Your winnings at the moment " + QuestionsEnum.getWinningsByQuestionNumber(questionsCount) + " euros");
-            activeHelpersText();
+        while (isAnswerCorrect && questionsCount < QuestionsEnum.getMaxNumberValue()) {
+            printHeaderText();
             questionsCount++;
-            Question question = questionsService.getQuestionByDifficulty(getDifficultByQuestionNumber(questionsCount)).get();
-            questionsService.printQuestionAndAnswers(question);
-            resumeGame = isAnswerCorrect(question);
+            question = questionsService.getQuestionByDifficulty(getDifficultByQuestionNumber(questionsCount)).get();
+            if (userAnswering()) {
+                break;
+            }
             questionsService.removeQuestionFromList(question);
         }
     }
 
-    private void activeHelpersText() {
-        List<String> helpers = new ArrayList<>();
-        if (fiftyFifty) {
-            helpers.add("50/50");
+    private boolean userAnswering() {
+        String userAnswer = getUserInputToTheQuestion(question);
+        if (userAnswer.equalsIgnoreCase("take money")) {
+            System.out.println("Your winning " + QuestionsEnum.getWinningsByQuestionNumber(questionsCount - 1) + " euros");
+            return true;
+        } else if (userAnswer.equalsIgnoreCase("need help")) {
+            useHelpers();
+        } else {
+            isAnswerCorrect = isAnswerCorrect(question, userAnswer);
         }
-        if (friendCall) {
-            helpers.add("Friend call");
-        }
-        if (audienceHelp) {
-            helpers.add("Audience help");
-        }
+        return false;
+    }
 
-        if (helpers.size() == 0) {
+    private String getUserInputToTheQuestion(Question question) {
+        Scanner scanner = new Scanner(System.in);
+        questionsService.printQuestionAndAnswers(question);
+        return scanner.nextLine();
+    }
+
+
+    private void useHelpers() {
+        Helper helper = getHelperByName(getHelperNameFromUser());
+        questionsService.useHelper(question,helper);
+        userAnswering(); //TODO ateina klaida kai panaudoja si metoda veliau nenubreikina pagrindinio loopo
+    }
+
+    private String getHelperNameFromUser() {
+        String input = "";
+        if (countActiveHelpers() == 0) {
+            System.out.println("You haven't any helpers");
+            return null;
+        } else {
+            while (!isHelperExistsOrActive(input)) {
+                Scanner scanner = new Scanner(System.in);
+                System.out.println("Witch help you want to use?");
+                helpers.stream()
+                        .filter(Helper::isActive)
+                        .forEach(System.out::println);
+                input = scanner.nextLine();
+            } return input;
+        }
+    }
+
+    private Helper getHelperByName(String name){
+        return helpers.stream()
+                .filter(helper -> helper.getName().equalsIgnoreCase(name))
+                .findAny().get();
+    }
+
+    private boolean isHelperExistsOrActive(String input) {
+        return helpers.stream()
+                .filter(Helper::isActive)
+                .anyMatch(helper -> helper.getName().equalsIgnoreCase(input));
+    }
+
+    private void printHeaderText() {
+        System.out.println("*****************************************************");
+        System.out.println("Your winnings at the moment " + QuestionsEnum.getWinningsByQuestionNumber(questionsCount) + " euros");
+        activeHelpersText();
+        System.out.println("Key words: TAKE MONEY if you want end gam and take money, NEED HELP if you want use helper");
+    }
+
+    private void activeHelpersText() {
+        if (countActiveHelpers() == 0) {
             System.out.println("You don't have helpers");
         } else {
             System.out.print("You have helpers: ");
             int i = 0;
-            for (String helper : helpers) {
+            for (Helper helper : helpers) {
                 i++;
-                if (helpers.size() == i) {
-                    System.out.print(helper + ".");
-                } else {
-                    System.out.print(helper + " ,");
+                if (helpers.size() == i && helper.isActive()) {
+                    System.out.println(helper.getName() + ".");
+                } else if (helper.isActive()) {
+                    System.out.print(helper.getName() + " ,");
                 }
             }
         }
-        System.out.println();
     }
 
-    private GameDifficult getDifficultByQuestionNumber(int questionsCount){
+    private int countActiveHelpers() {
+        return (int) helpers.stream()
+                .filter(Helper::isActive)
+                .count();
+    }
+
+    private GameDifficult getDifficultByQuestionNumber(int questionsCount) {
         for (GameDifficult value : GameDifficult.values()) {
             for (int i : value.getQuestionNumber()) {
-                if (i == questionsCount){
+                if (i == questionsCount) {
                     return value;
                 }
             }
-        } return null;
+        }
+        return null;
     }
 
-    private boolean isAnswerCorrect(Question question) {
-        Scanner scanner = new Scanner(System.in);
-        String userAnswer = scanner.next();
-        if(userAnswer.equalsIgnoreCase(question.getCorrectAnswer().getAnswer())){
+    private boolean isAnswerCorrect(Question question, String userAnswer) {
+        if (userAnswer.equalsIgnoreCase(question.getCorrectAnswer().getAnswer())) {
             System.out.println("Correct");
             return true;
         }
@@ -89,33 +149,5 @@ public class GameProcess {
 
     public void setSafeAmountOfWinnings(int safeAmountOfWinnings) {
         this.safeAmountOfWinnings = safeAmountOfWinnings;
-    }
-
-    public void setFiftyFifty(boolean fiftyFifty) {
-        this.fiftyFifty = fiftyFifty;
-    }
-
-    public void setFriendCall(boolean friendCall) {
-        this.friendCall = friendCall;
-    }
-
-    public void setAudienceHelp(boolean audienceHelp) {
-        this.audienceHelp = audienceHelp;
-    }
-
-    public int getSafeAmountOfWinnings() {
-        return safeAmountOfWinnings;
-    }
-
-    public boolean isFiftyFifty() {
-        return fiftyFifty;
-    }
-
-    public boolean isFriendCall() {
-        return friendCall;
-    }
-
-    public boolean isAudienceHelp() {
-        return audienceHelp;
     }
 }

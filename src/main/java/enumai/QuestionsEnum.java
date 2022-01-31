@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 public enum QuestionsEnum {
+    NUMBER0(0,0),
     NUMBER1(1, 100),
     NUMBER2(2, 200),
     NUMBER3(3, 300),

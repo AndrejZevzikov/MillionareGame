@@ -45,6 +45,7 @@ public class Question {
     }
 
     public void useFriendCall() {
+        useAudienceHelp();
         Answers answer = getAnswerForBiggestAudienceVoting();
         if (answer.getAudiencePercentages() > 70) {
             System.out.println("I pretty sure answer is " + answer.getAnswer());

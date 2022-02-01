@@ -9,6 +9,7 @@ import helpers.FiftyFifty;
 import helpers.FriendCall;
 import helpers.Helper;
 
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -40,19 +41,32 @@ public class GameProcess {
             }
             questionsService.removeQuestionFromList(question);
         }
+        if(isAnswerCorrect && questionsCount == 15){
+            System.out.println("Congrats you win 1 000 000!");
+        }
     }
 
     private boolean userAnswering() {
-        String userAnswer = getUserInputToTheQuestion(question);
-        if (userAnswer.equalsIgnoreCase("take money")) {
-            System.out.println("Your winning " + QuestionsEnum.getWinningsByQuestionNumber(questionsCount - 1) + " euros");
-            return true;
-        } else if (userAnswer.equalsIgnoreCase("need help")) {
-            useHelpers();
-        } else {
-            isAnswerCorrect = isAnswerCorrect(question, userAnswer);
+        String userAnswer = "";
+        while (userAnswer.equalsIgnoreCase("")|| userAnswer.equalsIgnoreCase("need help")) {
+            userAnswer = getUserInputToTheQuestion(question);
+            if (userAnswer.equalsIgnoreCase("take money")) {
+                System.out.println("Your winning " + QuestionsEnum.getWinningsByQuestionNumber(questionsCount - 1) + " euros");
+                return true;
+            } else if (userAnswer.equalsIgnoreCase("need help")) {
+                useHelpers();
+            } else {
+                isAnswerCorrect = isAnswerCorrect(question, userAnswer);
+                if(!isAnswerCorrect) wrongAnswerText();
+            }
         }
         return false;
+    }
+
+    private void wrongAnswerText() {
+        int win = safeAmountOfWinnings <= QuestionsEnum.getWinningsByQuestionNumber(questionsCount-1)
+        ? safeAmountOfWinnings : 0;
+        System.out.println("Wrong, your winnings is: " + win + " euros");
     }
 
     private String getUserInputToTheQuestion(Question question) {
@@ -65,7 +79,6 @@ public class GameProcess {
     private void useHelpers() {
         Helper helper = getHelperByName(getHelperNameFromUser());
         questionsService.useHelper(question,helper);
-        userAnswering(); //TODO ateina klaida kai panaudoja si metoda veliau nenubreikina pagrindinio loopo
     }
 
     private String getHelperNameFromUser() {
@@ -99,6 +112,7 @@ public class GameProcess {
 
     private void printHeaderText() {
         System.out.println("*****************************************************");
+        System.out.println("Your save amount of money is: " + safeAmountOfWinnings + " euros");
         System.out.println("Your winnings at the moment " + QuestionsEnum.getWinningsByQuestionNumber(questionsCount) + " euros");
         activeHelpersText();
         System.out.println("Key words: TAKE MONEY if you want end gam and take money, NEED HELP if you want use helper");
@@ -112,7 +126,7 @@ public class GameProcess {
             int i = 0;
             for (Helper helper : helpers) {
                 i++;
-                if (helpers.size() == i && helper.isActive()) {
+                if (countActiveHelpers() == i && helper.isActive()) {
                     System.out.println(helper.getName() + ".");
                 } else if (helper.isActive()) {
                     System.out.print(helper.getName() + " ,");
@@ -132,7 +146,7 @@ public class GameProcess {
             for (int i : value.getQuestionNumber()) {
                 if (i == questionsCount) {
                     return value;
-                }
+                } //TODO prideti questions enume papidoma lauka game dificult enum ir isimti masyvus is game difficult enumo
             }
         }
         return null;
@@ -143,11 +157,10 @@ public class GameProcess {
             System.out.println("Correct");
             return true;
         }
-        System.out.println("Wrong");
         return false;
     }
 
-    public void setSafeAmountOfWinnings(int safeAmountOfWinnings) {
+    private void setSafeAmountOfWinnings(int safeAmountOfWinnings) {
         this.safeAmountOfWinnings = safeAmountOfWinnings;
     }
 }

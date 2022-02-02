@@ -4,29 +4,32 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 public enum QuestionsEnum {
-    NUMBER0(0,0),
-    NUMBER1(1, 100),
-    NUMBER2(2, 200),
-    NUMBER3(3, 300),
-    NUMBER4(4, 500),
-    NUMBER5(5, 1000),
-    NUMBER6(6, 2000),
-    NUMBER7(7, 4000),
-    NUMBER8(8, 8000),
-    NUMBER9(9, 16000),
-    NUMBER10(10, 32000),
-    NUMBER11(11, 64000),
-    NUMBER12(12, 125000),
-    NUMBER13(13, 250000),
-    NUMBER14(14, 500000),
-    NUMBER15(15, 1000000);
+    NUMBER0(0,0, GameDifficult.NONE),
+    NUMBER1(1, 100, GameDifficult.VERY_EASY),
+    NUMBER2(2, 200, GameDifficult.VERY_EASY),
+    NUMBER3(3, 300, GameDifficult.VERY_EASY),
+    NUMBER4(4, 500, GameDifficult.EASY),
+    NUMBER5(5, 1000, GameDifficult.EASY),
+    NUMBER6(6, 2000, GameDifficult.EASY),
+    NUMBER7(7, 4000, GameDifficult.MEDIUM),
+    NUMBER8(8, 8000, GameDifficult.MEDIUM),
+    NUMBER9(9, 16000, GameDifficult.MEDIUM),
+    NUMBER10(10, 32000, GameDifficult.HARD),
+    NUMBER11(11, 64000, GameDifficult.HARD),
+    NUMBER12(12, 125000, GameDifficult.HARD),
+    NUMBER13(13, 250000, GameDifficult.EXTREME),
+    NUMBER14(14, 500000, GameDifficult.EXTREME),
+    NUMBER15(15, 1000000, GameDifficult.EXTREME);
 
-    int number;
-    int winingMoney;
+    final int number;
+    final int winingMoney;
+    final GameDifficult difficult;
 
-    QuestionsEnum(int number, int winingMoney) {
+
+    QuestionsEnum(int number, int winingMoney, GameDifficult difficult) {
         this.number = number;
         this.winingMoney = winingMoney;
+        this.difficult = difficult;
     }
 
     public int getNumber() {
@@ -35,6 +38,10 @@ public enum QuestionsEnum {
 
     public int getWiningMoney() {
         return winingMoney;
+    }
+
+    public GameDifficult getDifficult(){
+        return difficult;
     }
 
     public static int getMaxNumberValue(){

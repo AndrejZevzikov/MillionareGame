@@ -5,7 +5,7 @@ import enumai.QuestionsEnum;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-public class MeniuText {
+public class MeniuText { //TODO galbut verta atsisakyti klases ir perkelti i game process
 
     public static int getSafeMoneyChoice() {
         int returnValue = 0;

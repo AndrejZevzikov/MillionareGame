@@ -3,6 +3,8 @@ package QA;
 import lombok.Data;
 
 import enumai.GameDifficult;
+
+import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
@@ -68,7 +70,7 @@ public class Question {
         } else if (getDifficult().equals(GameDifficult.EXTREME)) {
             setAudienceVotingForExtremeDifficult();
         }
-    }
+    } //TODO galbut visas pagalbas perkelti prie pagalbu klases
 
     private void setAudienceVotingForExtremeDifficult() {
         Random random = new Random();

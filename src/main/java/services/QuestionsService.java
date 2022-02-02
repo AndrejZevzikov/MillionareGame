@@ -7,6 +7,9 @@ import helpers.Helper;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class QuestionsService {
 
@@ -16,10 +19,12 @@ public class QuestionsService {
         this.questionsList = questionsList;
     }
 
-    public Optional<Question> getQuestionByDifficulty(GameDifficult difficult) {
-        return questionsList.stream()
+    public Question getQuestionByDifficulty(GameDifficult difficult) {
+        Random random = new Random();
+        List<Question> sortedQuestions = questionsList.stream()
                 .filter(question -> question.getDifficult().equals(difficult))
-                .findAny();
+                .collect(Collectors.toList());
+        return sortedQuestions.get(random.nextInt(sortedQuestions.size()-1));
     }
 
     public void removeQuestionFromList(Question question) {
@@ -29,11 +34,6 @@ public class QuestionsService {
                 break;
             }
         }
-    }
-
-
-    public void printQuestionForUserByDifficult(GameDifficult difficult) {
-        printQuestionAndAnswers(getQuestionByDifficulty(difficult).get());
     }
 
     public void printQuestionAndAnswers(Question question) {

@@ -2,6 +2,8 @@ package QA;
 
 import lombok.Data;
 
+import java.util.Objects;
+
 @Data
 public class Answers implements Comparable<Answers> {
     private String answer;
@@ -24,5 +26,18 @@ public class Answers implements Comparable<Answers> {
     @Override
     public int compareTo(Answers answerToCompare) {
         return audiencePercentages - answerToCompare.getAudiencePercentages();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Answers answers = (Answers) o;
+        return correct == answers.correct && audiencePercentages == answers.audiencePercentages && Objects.equals(answer, answers.answer);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(answer, correct, audiencePercentages);
     }
 }

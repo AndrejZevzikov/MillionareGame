@@ -35,7 +35,7 @@ public class GameProcess {
         while (isAnswerCorrect && questionsCount < QuestionsEnum.getMaxNumberValue()) {
             printHeaderText();
             questionsCount++;
-            question = questionsService.getQuestionByDifficulty(getDifficultByQuestionNumber(questionsCount)).get();
+            question = questionsService.getQuestionByDifficulty(getDifficultByQuestionNumber(questionsCount));
             if (userAnswering()) {
                 break;
             }
@@ -61,7 +61,7 @@ public class GameProcess {
             }
         }
         return false;
-    }
+    } //TODO sita reikes refaktorint atrodo negraziai
 
     private void wrongAnswerText() {
         int win = safeAmountOfWinnings <= QuestionsEnum.getWinningsByQuestionNumber(questionsCount-1)
@@ -142,11 +142,9 @@ public class GameProcess {
     }
 
     private GameDifficult getDifficultByQuestionNumber(int questionsCount) {
-        for (GameDifficult value : GameDifficult.values()) {
-            for (int i : value.getQuestionNumber()) {
-                if (i == questionsCount) {
-                    return value;
-                } //TODO prideti questions enume papidoma lauka game dificult enum ir isimti masyvus is game difficult enumo
+        for (QuestionsEnum value : QuestionsEnum.values()) {
+            if (value.getNumber() == questionsCount){
+                return value.getDifficult();
             }
         }
         return null;
